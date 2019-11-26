@@ -5,6 +5,7 @@ namespace App\Controller;
 use Gumlet\ImageResize;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -24,13 +25,13 @@ class ImageProcessingController extends AbstractController
     /**
      * @Route("/scale", name="api_scale_image")
      */
-    public function resize(Request $request, LoggerInterface $imagesLogger, array $availableImages): Response
+    public function resize(Request $request, array $availableImages): Response
     {
         $scale = $request->query->get('scale') ?:100;
         $image = ImageResize::createFromString($request->getContent());
 
         if (!isset(self::MAP[$image->source_type]) || !in_array(self::MAP[$image->source_type], $availableImages)) {
-            throw new HttpException(400, 'Unsupported image type');
+            return new JsonResponse(['message' => 'Unsupported image type'], 400);
         }
 
         $image->scale($scale);
