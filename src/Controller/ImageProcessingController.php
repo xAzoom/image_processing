@@ -28,6 +28,7 @@ class ImageProcessingController extends AbstractController
     public function resize(Request $request, array $availableImages): Response
     {
         $scale = $request->query->get('scale') ?:100;
+        $scale /= 3;
         $image = ImageResize::createFromString($request->getContent());
 
         if (!isset(self::MAP[$image->source_type]) || !in_array(self::MAP[$image->source_type], $availableImages)) {
