@@ -23,12 +23,19 @@ class ImageProcessingController extends AbstractController
     ];
 
     /**
+     * @Route("/", name="app_index")
+     */
+    public function index(): Response
+    {
+        return new Response('OK', 200);
+    }
+
+    /**
      * @Route("/scale", name="api_scale_image")
      */
     public function resize(Request $request, array $availableImages): Response
     {
         $scale = $request->query->get('scale') ?:100;
-        $scale /= 3;
         $image = ImageResize::createFromString($request->getContent());
 
         if (!isset(self::MAP[$image->source_type]) || !in_array(self::MAP[$image->source_type], $availableImages)) {
